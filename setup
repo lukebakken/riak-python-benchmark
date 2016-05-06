@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+
+RIAK_ADMIN="${1:-$HOME/Projects/basho/riak_ts/dev/dev1/bin/riak-admin}"
+
+JSON="{\"props\": {\"table_def\": \"CREATE TABLE tsycsb (
+     host VARCHAR NOT NULL,
+     worker VARCHAR NOT NULL,
+     time TIMESTAMP NOT NULL,
+     field0 VARCHAR,
+     field1 VARCHAR,
+     field2 VARCHAR,
+     field3 VARCHAR,
+     field4 VARCHAR,
+     field5 VARCHAR,
+     field6 VARCHAR,
+     field7 VARCHAR,
+     field8 VARCHAR,
+     field9 VARCHAR,
+     primary key ((host, worker, quantum(time, 10, s)), host, worker, time))
+\"}}"
+
+pip install riak
+pip install gevent
+$RIAK_ADMIN bucket-type create tsycsb "$JSON"
+$RIAK_ADMIN bucket-type activate tsycsb
+$RIAK_ADMIN bucket-type status tsycsb
